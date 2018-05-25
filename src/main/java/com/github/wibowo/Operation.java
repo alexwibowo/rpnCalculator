@@ -15,7 +15,7 @@ public enum Operation {
     Plus("+",2){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
-            Preconditions.checkArgument(arguments.size() == 2, "Plus operation requires two arguments. Received: {}", arguments);
+            verifyArguments(this, arguments);
             final RealNumber firstNumber = arguments.get(0);
             final RealNumber secondNumber = arguments.get(1);
             return RealNumber.of(firstNumber.eval().add(secondNumber.eval()));
@@ -25,8 +25,9 @@ public enum Operation {
     Sqrt("sqrt", 1) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
-            throw new RuntimeException("Not implemented yet");
-
+            verifyArguments(this, arguments);
+            final RealNumber firstNumber = arguments.get(0);
+            return RealNumber.of(Math.sqrt(firstNumber.eval().doubleValue()));
         }
     },
     Undo("undo",0) {
@@ -55,6 +56,13 @@ public enum Operation {
             return operationString.matches("^[-+]?[0-9]*\\.?[0-9]+$");
         }
     };
+
+    private static void verifyArguments(final Operation operation,
+                                        final List<RealNumber> arguments) {
+        Preconditions.checkArgument(arguments.size() == operation.numArguments,
+                String.format("%s operation requires %d arguments. Received: %s", operation.name(), operation.numArguments, arguments)
+        );
+    }
 
     static final Map<String, Operation> dictionary = complementOf(of(Operation.Push))
                 .stream()
