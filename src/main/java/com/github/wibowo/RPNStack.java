@@ -1,22 +1,16 @@
 package com.github.wibowo;
 
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.joining;
 
 public class RPNStack<E> {
 
-    private final java.util.Stack<E> stack;
+    private final java.util.LinkedList<E> stack;
 
     public RPNStack(){
-        stack = new Stack<>();
-    }
-
-    public boolean isEmpty() {
-        return stack.isEmpty();
+        stack = new LinkedList<>();
     }
 
     public RPNStack push(final E item) {
@@ -30,7 +24,7 @@ public class RPNStack<E> {
 
     @Override
     public String toString() {
-        return stack.stream()
+        return StreamSupport.stream(Spliterators.spliterator(stack.descendingIterator(), stack.size(), Spliterator.ORDERED), false)
                 .map(Object::toString)
                 .collect(joining(" ", "stack: ", ""));
     }
