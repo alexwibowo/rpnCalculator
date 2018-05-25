@@ -82,6 +82,27 @@ class OperationTest {
     }
 
     @Test
+    void test_multiply() {
+        assertThat(Operation.Multiply.evaluate(TestHelper.getArguments("2", "3")))
+                .isEqualTo(RealNumber.of("6"));
+        assertThat(Operation.Multiply.evaluate(TestHelper.getArguments("3", "2")))
+                .isEqualTo(Operation.Multiply.evaluate(TestHelper.getArguments("2", "3")));
+        assertThat(Operation.Multiply.evaluate(TestHelper.getArguments("-2", "3")))
+                .isEqualTo(RealNumber.of("-6"));
+        assertThat(Operation.Multiply.evaluate(TestHelper.getArguments("0", "3")))
+                .isEqualTo(RealNumber.of("0"));
+        assertThat(Operation.Multiply.evaluate(TestHelper.getArguments("-2.12345", "5")))
+                .isEqualTo(RealNumber.of("-10.61725"));
+    }
+
+    @Test
+    void multiply_requires_two_arguments() {
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> Operation.Multiply.evaluate(TestHelper.getArguments("2")));
+        assertThat(exception.getMessage())
+                .isEqualTo("Multiply operation requires 2 arguments. Received: [2]");
+    }
+
+    @Test
     void whitespace_should_be_trimmed_for_number() {
         assertFalse(Operation.Push.matches("   0.0009    "));
     }
