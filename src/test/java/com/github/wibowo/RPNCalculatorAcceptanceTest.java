@@ -27,20 +27,21 @@ class RPNCalculatorAcceptanceTest {
     }
 
     @Test
-    void test_plus() throws Exception {
-        {
-            givenInput("5 2 plus\n");
-            final String[] output = executeAndGetOutput();
-            assertThat(output).containsExactly("stack: 7");
-        }
-        {
-            givenInput(
-                    "5 2\n" +
-                    "plus\n");
-            final String[] output = executeAndGetOutput();
-            assertThat(output[0]).isEqualTo("stack: 5 2");
-            assertThat(output[1]).isEqualTo("stack: 7");
-        }
+    void test_plus_inlined() throws Exception {
+        givenInput("5 2 +\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output).containsExactly("stack: 7");
+    }
+
+    @Test
+    void test_plus_on_current_stack() throws Exception {
+        givenInput(
+                "5 2\n" +
+                "+\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(2);
+        assertThat(output[0]).isEqualTo("stack: 5 2");
+        assertThat(output[1]).isEqualTo("stack: 7");
     }
 
     @Test

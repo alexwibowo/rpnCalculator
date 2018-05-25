@@ -10,6 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RealNumberTest {
 
     @Test
+    void eval_value_from_bigDecimal() {
+        final BigDecimal source = new BigDecimal("42.12345");
+        assertThat(RealNumber.of(source).eval())
+                .isSameAs(source);
+    }
+
+    @Test
     void eval_value_with_fractions_and_default_scaling() throws Exception{
         assertThat(RealNumber.of("42.5678956789567895678956789").eval())
                 .isEqualTo(new BigDecimal("42.5678956789567896"));

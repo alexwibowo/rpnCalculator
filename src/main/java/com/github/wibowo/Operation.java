@@ -14,8 +14,11 @@ import static java.util.stream.Collectors.toMap;
 public enum Operation {
     Plus("+",2){
         @Override
-        public RealNumber evaluate(List<RealNumber> arguments) {
-            throw new RuntimeException("Not implemented yet");
+        public RealNumber evaluate(final List<RealNumber> arguments) {
+            Preconditions.checkArgument(arguments.size() == 2, "Plus operation requires two arguments. Received: {}", arguments);
+            final RealNumber firstNumber = arguments.get(0);
+            final RealNumber secondNumber = arguments.get(1);
+            return RealNumber.of(firstNumber.eval().add(secondNumber.eval()));
         }
 
     },

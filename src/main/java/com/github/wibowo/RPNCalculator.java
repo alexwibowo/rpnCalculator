@@ -12,7 +12,7 @@ public final class RPNCalculator {
     private static final Logger LOGGER = LoggerFactory.getLogger(RPNCalculator.class);
 
     public static void main(String[] args) throws CalculatorException {
-        LOGGER.info("RPN Calculator");
+        System.out.println("RPN Calculator");
 
         final Scanner scanner = new Scanner(System.in);
         final RPNStack<OperationExecution> operationExecutions = new RPNStack<>();
@@ -20,8 +20,8 @@ public final class RPNCalculator {
             final String line = scanner.nextLine();
             if (!line.trim().isEmpty()) {
                 processLine(operationExecutions, line);
+                System.out.println(operationExecutions.toString());
             }
-            System.out.println(operationExecutions.toString());
         }
 
     }

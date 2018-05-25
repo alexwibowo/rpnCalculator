@@ -43,6 +43,10 @@ public final class RealNumber  {
         );
     }
 
+    public static RealNumber of(final BigDecimal number) {
+        return new RealNumber(number);
+    }
+
     public BigDecimal eval() {
         return value;
     }
