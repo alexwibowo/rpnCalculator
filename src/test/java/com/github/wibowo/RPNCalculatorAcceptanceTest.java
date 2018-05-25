@@ -98,6 +98,21 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output).containsExactly("stack: 3");
     }
 
+    @Tag("ExampleTest")
+    @DisplayName("Example 3")
+    @Test
+    void test_minus_sample_2() {
+        givenInput("" +
+                "5 2 -\n" +
+                "3 -\n"+
+                "clear\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(3);
+        assertThat(output[0]).isEqualTo("stack: 3");
+        assertThat(output[1]).isEqualTo("stack: 0");
+        assertThat(output[2]).isEqualTo("stack: ");
+    }
+
     @NotNull
     private String[] executeAndGetOutput() {
         final ByteArrayOutputStream outputStream = setupOutput();
