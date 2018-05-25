@@ -75,6 +75,6 @@ class RealNumberTest {
     @Test
     void toString_returns_plain_decimal_string() {
         assertThat(RealNumber.of("9000000000000").toString())
-                .isEqualTo("9,000,000,000,000");
+                .isEqualTo("9000000000000");
     }
 }

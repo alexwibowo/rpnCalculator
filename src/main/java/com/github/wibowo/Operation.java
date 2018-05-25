@@ -12,7 +12,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public enum Operation {
-    Plus("+",2){
+    Plus("+",2, true){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
             verifyArguments(this, arguments);
@@ -22,7 +22,7 @@ public enum Operation {
         }
 
     },
-    Minus("-", 2){
+    Minus("-", 2, true){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
             verifyArguments(this, arguments);
@@ -31,7 +31,7 @@ public enum Operation {
             return RealNumber.of(secondNumber.eval().subtract(firstNumber.eval()));
         }
     },
-    Multiply("*", 2){
+    Multiply("*", 2, true){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
             verifyArguments(this, arguments);
@@ -40,7 +40,7 @@ public enum Operation {
             return RealNumber.of(secondNumber.eval().multiply(firstNumber.eval()));
         }
     },
-    Sqrt("sqrt", 1) {
+    Sqrt("sqrt", 1, true) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
             verifyArguments(this, arguments);
@@ -48,20 +48,20 @@ public enum Operation {
             return RealNumber.of(Math.sqrt(firstNumber.eval().doubleValue()));
         }
     },
-    Undo("undo",0) {
+    Undo("undo",0, false) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
             throw new UnsupportedOperationException("Should not try to evaluate Undo operation. This is most likely a programming error.");
         }
     },
-    Clear("clear",0) {
+    Clear("clear",0, false) {
         @Override
         public RealNumber evaluate(List<RealNumber> arguments) {
             throw new RuntimeException("Not implemented yet");
 
         }
     },
-    Push("",0) {
+    Push("",0, false) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
             Preconditions.checkArgument(arguments.size() == 1,
@@ -88,11 +88,17 @@ public enum Operation {
 
     final String command;
     final int numArguments;
+    /**
+     * <code>true</code> means that we need to push the argument back to the stack on 'undo' operation
+     */
+    final boolean pushArgumentsOnUndo;
 
     Operation(final String command,
-              final int numArguments) {
+              final int numArguments,
+              final boolean pushArgumentsOnUndo) {
         this.command = command;
         this.numArguments = numArguments;
+        this.pushArgumentsOnUndo = pushArgumentsOnUndo;
     }
 
     public String command() {

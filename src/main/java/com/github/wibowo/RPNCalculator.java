@@ -54,10 +54,12 @@ public final class RPNCalculator {
 
     private static void performUndo(final RPNStack<OperationExecution> operationExecutions) {
         final OperationExecution pop = operationExecutions.pop();
-        final List<RealNumber> arguments = pop.getArguments();
-        for (int i = arguments.size()-1; i >= 0; i--) {
-            final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
-            operationExecutions.push(operationExecution);
+        if (pop.getOperation().pushArgumentsOnUndo) {
+            final List<RealNumber> arguments = pop.getArguments();
+            for (int i = arguments.size()-1; i >= 0; i--) {
+                final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
+                operationExecutions.push(operationExecution);
+            }
         }
     }
 

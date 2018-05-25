@@ -113,6 +113,42 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output[2]).isEqualTo("stack: ");
     }
 
+    @Test
+    void test_undo_push_number() {
+        givenInput("" +
+                "5 4\n" +
+                "undo\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(2);
+        assertThat(output[0]).isEqualTo("stack: 5 4");
+        assertThat(output[1]).isEqualTo("stack: 5");
+    }
+
+    @Tag("ExampleTest")
+    @DisplayName("Example 4")
+    @Test
+    void test_complex_undo() {
+        givenInput("" +
+                "5 4 3 2\n" +
+                "undo undo *\n"+
+                "5 *\n" +
+                "undo\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(4);
+        assertThat(output[0]).isEqualTo("stack: 5 4 3 2");
+        assertThat(output[1]).isEqualTo("stack: 20");
+        assertThat(output[2]).isEqualTo("stack: 100");
+        assertThat(output[3]).isEqualTo("stack: 20 5");
+    }
+
+    @Test
+    void should_not_print_in_scientific_notation() {
+        givenInput("" +
+                "1000000 10 *\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output).containsExactly("stack: 10000000");
+    }
+
     @NotNull
     private String[] executeAndGetOutput() {
         final ByteArrayOutputStream outputStream = setupOutput();
