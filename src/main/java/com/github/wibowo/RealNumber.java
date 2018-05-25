@@ -15,7 +15,7 @@ public final class RealNumber  {
         final DecimalFormat decimalFormatter = new DecimalFormat();
         decimalFormatter.setMaximumFractionDigits(DEFAULT_SCALE);
         decimalFormatter.setMinimumFractionDigits(0);
-        decimalFormatter.setGroupingUsed(true);
+        decimalFormatter.setGroupingUsed(false);
         return decimalFormatter;
     });
 
