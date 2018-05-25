@@ -10,6 +10,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RealNumberTest {
 
     @Test
+    void test_equality() {
+        assertThat(RealNumber.of("5"))
+            .isEqualTo(RealNumber.of("5"));
+        assertThat(RealNumber.of("5"))
+                .isEqualTo(RealNumber.of("   5   "));
+    }
+
+    @Test
+    void strip_trailing_zeroes() {
+        assertThat(RealNumber.of("5.0000000000000"))
+                .isEqualTo(RealNumber.of("5"));
+    }
+
+    @Test
     void eval_value_from_bigDecimal() {
         final BigDecimal source = new BigDecimal("42.12345");
         assertThat(RealNumber.of(source).eval())
@@ -17,39 +31,39 @@ class RealNumberTest {
     }
 
     @Test
-    void eval_value_with_fractions_and_default_scaling() throws Exception{
+    void eval_value_with_fractions_and_default_scaling() {
         assertThat(RealNumber.of("42.5678956789567895678956789").eval())
-                .isEqualTo(new BigDecimal("42.5678956789567896"));
+                .isEqualTo(new BigDecimal("42.5678956789"));
     }
 
     @Test
-    void eval_value_with_fractions_and_specific_scaling() throws Exception{
-        assertThat(RealNumber.of("42.5678956789567895678956789", 20).eval())
-                .isEqualTo(new BigDecimal("42.56789567895678956790"));
+    void eval_value_with_fractions_and_specific_scaling() {
+        assertThat(RealNumber.of("42.567895678956789567895678956789", 20).eval())
+                .isEqualTo(new BigDecimal("42.56789567895678956789"));
     }
 
     @Test
-    void eval_whole_integer() throws Exception{
+    void eval_whole_integer() {
         assertThat(RealNumber.of("42").eval())
                 .isEqualTo(new BigDecimal("42"));
     }
 
     @Test
-    void eval_returns_the_value_passed_in() throws Exception{
-        assertThat(RealNumber.of("42.0").eval())
-                .isEqualTo(new BigDecimal("42.0"));
+    void eval_returns_the_value_passed_in() {
+        assertThat(RealNumber.of("42.5").eval())
+                .isEqualTo(new BigDecimal("42.5"));
     }
 
     @Test
-    void eval_negative_value() throws Exception{
-        assertThat(RealNumber.of("-42.0").eval())
-                .isEqualTo(new BigDecimal("-42.0"));
+    void eval_negative_value() {
+        assertThat(RealNumber.of("-42.5").eval())
+                .isEqualTo(new BigDecimal("-42.5"));
     }
 
     @Test
-    void eval_value_with_whitespaces() throws Exception{
+    void eval_value_with_whitespaces() {
         assertThat(RealNumber.of("    42.0\t\t\t").eval())
-                .isEqualTo(new BigDecimal("42.0"));
+                .isEqualTo(new BigDecimal("42"));
     }
 
     @Test
@@ -59,7 +73,7 @@ class RealNumberTest {
     }
 
     @Test
-    void toString_returns_plain_decimal_string() throws Exception {
+    void toString_returns_plain_decimal_string() {
         assertThat(RealNumber.of("9000000000000").toString())
                 .isEqualTo("9,000,000,000,000");
     }

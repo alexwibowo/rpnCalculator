@@ -8,7 +8,8 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 
 public final class RealNumber  {
-    private static final int DEFAULT_SCALE = 16;
+    private static final int DEFAULT_SCALE = 10;
+    private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.FLOOR;
 
     private final ThreadLocal<DecimalFormat> decimalFormatter = ThreadLocal.withInitial(() -> {
         final DecimalFormat decimalFormatter = new DecimalFormat();
@@ -26,9 +27,9 @@ public final class RealNumber  {
             BigDecimal value = new BigDecimal(numberAsString.trim());
             final int scale = value.scale();
             if (scale > DEFAULT_SCALE) {
-                value = value.setScale(DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+                value = value.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
             }
-            return new RealNumber(value);
+            return new RealNumber(value.stripTrailingZeros());
         } catch (final Exception exception) {
             throw new CalculatorException(String.format("Unable to convert [%s] into a number.", numberAsString));
         }
@@ -39,12 +40,21 @@ public final class RealNumber  {
         Objects.requireNonNull(constantAsString);
         return new RealNumber(
                 new BigDecimal(constantAsString)
-                    .setScale(scale, RoundingMode.HALF_EVEN)
+                    .setScale(scale, DEFAULT_ROUNDING_MODE)
+                    .stripTrailingZeros()
         );
     }
 
     public static RealNumber of(final BigDecimal number) {
         return new RealNumber(number);
+    }
+
+    public static RealNumber of(double number) {
+        return new RealNumber(
+                new BigDecimal(number)
+                    .setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE)
+                    .stripTrailingZeros()
+        );
     }
 
     public BigDecimal eval() {
@@ -53,6 +63,22 @@ public final class RealNumber  {
 
     private RealNumber(final @NotNull BigDecimal value) {
         this.value = Objects.requireNonNull(value);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RealNumber that = (RealNumber) o;
+
+        return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 
     @Override

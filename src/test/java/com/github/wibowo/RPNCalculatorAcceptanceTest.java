@@ -13,28 +13,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RPNCalculatorAcceptanceTest {
 
     @Test
-    void push_single_number_to_stack() throws Exception {
+    void push_single_number_to_stack() {
         givenInput("5\n");
         final String[] output = executeAndGetOutput();
         assertThat(output).containsExactly("stack: 5");
     }
 
     @Test
-    void push_multiple_number_to_stack() throws Exception {
+    void push_multiple_number_to_stack() {
         givenInput("5 2\n");
         final String[] output = executeAndGetOutput();
         assertThat(output).containsExactly("stack: 5 2");
     }
 
     @Test
-    void test_plus_inlined() throws Exception {
+    void test_plus_inlined() {
         givenInput("5 2 +\n");
         final String[] output = executeAndGetOutput();
         assertThat(output).containsExactly("stack: 7");
     }
 
     @Test
-    void test_plus_on_current_stack() throws Exception {
+    void test_plus_on_current_stack() {
         givenInput(
                 "5 2\n" +
                 "+\n");
@@ -45,7 +45,7 @@ class RPNCalculatorAcceptanceTest {
     }
 
     @Test
-    void test_undo() throws Exception {
+    void test_undo() {
         givenInput("" +
                 "5 2 +\n" +
                 "undo\n");
@@ -56,9 +56,17 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output[1]).isEqualTo("stack: 5 2");
     }
 
+    @Test
+    void test_squareRoot() {
+        givenInput("" +
+                "2 sqrt\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output).containsExactly("stack: 1.4142135623");
+    }
+
 
     @NotNull
-    private String[] executeAndGetOutput() throws Exception {
+    private String[] executeAndGetOutput() {
         final ByteArrayOutputStream outputStream = setupOutput();
         RPNCalculator.main(new String[]{});
         final String actual = outputStream.toString();

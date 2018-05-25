@@ -7,7 +7,7 @@ import java.util.stream.StreamSupport;
 
 public final class RPNCalculator {
 
-    public static void main(String[] args) throws CalculatorException {
+    public static void main(final String[] args) throws CalculatorException {
         System.out.println("RPN Calculator");
 
         final Scanner scanner = new Scanner(System.in);
@@ -22,29 +22,38 @@ public final class RPNCalculator {
 
     }
 
-    private static void processLine(final RPNStack<OperationExecution> operatorStack,
+    private static void processLine(final RPNStack<OperationExecution> operationExecutions,
                                     final String line) {
         for (final String lineComponent : line.split("\\s+")) {
             final Operation operation = findOperation(lineComponent);
             if (operation == Operation.Push) {
-                operatorStack.push(new OperationExecution(operation, RealNumber.of(lineComponent)));
+                operationExecutions.push(new OperationExecution(operation, RealNumber.of(lineComponent)));
             } else if (operation == Operation.Clear) {
 
             } else if (operation == Operation.Undo) {
-                final OperationExecution pop = operatorStack.pop();
-                final List<RealNumber> arguments = pop.getArguments();
-                for (int i = arguments.size()-1; i >= 0; i--) {
-                    final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
-                    operatorStack.push(operationExecution);
-                }
+                performUndo(operationExecutions);
             } else {
-                final Iterable<OperationExecution> executions = operatorStack.pop(operation.numArguments);
-                final List<RealNumber> arguments = StreamSupport.stream(executions.spliterator(), false)
-                        .map(OperationExecution::getResult)
-                        .collect(Collectors.toList());
-                final OperationExecution operationExecution = new OperationExecution(operation, arguments);
-                operatorStack.push(operationExecution);
+                performOperation(operationExecutions, operation);
             }
+        }
+    }
+
+    private static void performOperation(final RPNStack<OperationExecution> operationExecutions,
+                                         final Operation operation) {
+        final Iterable<OperationExecution> executions = operationExecutions.pop(operation.numArguments);
+        final List<RealNumber> arguments = StreamSupport.stream(executions.spliterator(), false)
+                .map(OperationExecution::getResult)
+                .collect(Collectors.toList());
+        final OperationExecution operationExecution = new OperationExecution(operation, arguments);
+        operationExecutions.push(operationExecution);
+    }
+
+    private static void performUndo(final RPNStack<OperationExecution> operationExecutions) {
+        final OperationExecution pop = operationExecutions.pop();
+        final List<RealNumber> arguments = pop.getArguments();
+        for (int i = arguments.size()-1; i >= 0; i--) {
+            final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
+            operationExecutions.push(operationExecution);
         }
     }
 
