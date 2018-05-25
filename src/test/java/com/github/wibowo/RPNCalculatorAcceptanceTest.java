@@ -91,6 +91,12 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output[1]).isEqualTo("stack: 3");
     }
 
+    @Test
+    void test_minus() {
+        givenInput("5 2 -\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output).containsExactly("stack: 3");
+    }
 
     @NotNull
     private String[] executeAndGetOutput() {

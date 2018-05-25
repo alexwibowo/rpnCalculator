@@ -11,6 +11,7 @@ class OperationTest {
     @Test
     void test_dictionary() {
         assertNotNull(Operation.dictionary.get("+"));
+        assertNotNull(Operation.dictionary.get("-"));
         assertNotNull(Operation.dictionary.get("sqrt"));
         assertNotNull(Operation.dictionary.get("undo"));
         assertNotNull(Operation.dictionary.get("clear"));
@@ -19,6 +20,7 @@ class OperationTest {
     @Test
     void test_operation_matching() {
         assertTrue(Operation.Plus.matches("+"));
+        assertTrue(Operation.Minus.matches("-"));
         assertTrue(Operation.Sqrt.matches("sqrt"));
         assertTrue(Operation.Undo.matches("undo"));
         assertTrue(Operation.Clear.matches("clear"));
@@ -62,6 +64,21 @@ class OperationTest {
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> Operation.Sqrt.evaluate(TestHelper.getArguments("2","4")));
         assertThat(exception.getMessage())
                 .isEqualTo("Sqrt operation requires 1 arguments. Received: [2, 4]");
+    }
+
+    @Test
+    void test_minus() {
+        assertThat(Operation.Minus.evaluate(TestHelper.getArguments("2", "5")))
+                .isEqualTo(RealNumber.of("3"));
+        assertThat(Operation.Minus.evaluate(TestHelper.getArguments("5", "2")))
+                .isEqualTo(RealNumber.of("-3"));
+    }
+
+    @Test
+    void minus_requires_two_arguments() {
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> Operation.Minus.evaluate(TestHelper.getArguments("2")));
+        assertThat(exception.getMessage())
+                .isEqualTo("Minus operation requires 2 arguments. Received: [2]");
     }
 
     @Test

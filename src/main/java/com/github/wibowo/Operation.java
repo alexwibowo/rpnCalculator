@@ -22,6 +22,15 @@ public enum Operation {
         }
 
     },
+    Minus("-", 2){
+        @Override
+        public RealNumber evaluate(final List<RealNumber> arguments) {
+            verifyArguments(this, arguments);
+            final RealNumber firstNumber = arguments.get(0);
+            final RealNumber secondNumber = arguments.get(1);
+            return RealNumber.of(secondNumber.eval().subtract(firstNumber.eval()));
+        }
+    },
     Sqrt("sqrt", 1) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
