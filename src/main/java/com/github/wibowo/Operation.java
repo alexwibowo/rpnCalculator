@@ -2,6 +2,7 @@ package com.github.wibowo;
 
 import com.google.common.base.Preconditions;
 
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +39,15 @@ public enum Operation {
             final RealNumber firstNumber = arguments.get(0);
             final RealNumber secondNumber = arguments.get(1);
             return RealNumber.of(secondNumber.eval().multiply(firstNumber.eval()));
+        }
+    },
+    Divide("/", 2, true){
+        @Override
+        public RealNumber evaluate(final List<RealNumber> arguments) {
+            verifyArguments(this, arguments);
+            final RealNumber firstNumber = arguments.get(0);
+            final RealNumber secondNumber = arguments.get(1);
+            return RealNumber.of(secondNumber.eval().divide(firstNumber.eval(), RealNumber.DEFAULT_SCALE, RoundingMode.HALF_EVEN));
         }
     },
     Sqrt("sqrt", 1, true) {

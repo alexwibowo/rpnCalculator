@@ -141,6 +141,21 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output[3]).isEqualTo("stack: 20 5");
     }
 
+    @Tag("ExampleTest")
+    @DisplayName("Example 5")
+    @Test
+    void test_division() {
+        givenInput("" +
+                "7 12 2 /\n" +
+                "*\n"+
+                "4 /\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(3);
+        assertThat(output[0]).isEqualTo("stack: 7 6");
+        assertThat(output[1]).isEqualTo("stack: 42");
+        assertThat(output[2]).isEqualTo("stack: 10.5");
+    }
+
     @Test
     void should_not_print_in_scientific_notation() {
         givenInput("" +

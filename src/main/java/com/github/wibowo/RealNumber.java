@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 
 public final class RealNumber  {
-    private static final int DEFAULT_SCALE = 10;
+    public static final int DEFAULT_SCALE = 10;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.FLOOR;
 
     private final ThreadLocal<DecimalFormat> decimalFormatter = ThreadLocal.withInitial(() -> {

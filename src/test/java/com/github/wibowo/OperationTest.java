@@ -103,6 +103,12 @@ class OperationTest {
     }
 
     @Test
+    void test_divide() {
+        assertThat(Operation.Divide.evaluate(TestHelper.getArguments("4", "42")))
+                .isEqualTo(RealNumber.of("10.5"));
+    }
+
+    @Test
     void whitespace_should_be_trimmed_for_number() {
         assertFalse(Operation.Push.matches("   0.0009    "));
     }
