@@ -47,10 +47,11 @@ class RPNCalculatorAcceptanceTest {
     @Test
     void test_undo() throws Exception {
         givenInput("" +
-                "5 2 plus\n" +
+                "5 2 +\n" +
                 "undo\n");
 
         final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(2);
         assertThat(output[0]).isEqualTo("stack: 7");
         assertThat(output[1]).isEqualTo("stack: 5 2");
     }
