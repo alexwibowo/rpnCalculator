@@ -1,6 +1,8 @@
 package com.github.wibowo;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -19,6 +21,8 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output).containsExactly("stack: 5");
     }
 
+    @Tag("ExampleTest")
+    @DisplayName("Example 1")
     @Test
     void push_multiple_number_to_stack() {
         givenInput("5 2\n");
@@ -62,6 +66,29 @@ class RPNCalculatorAcceptanceTest {
                 "2 sqrt\n");
         final String[] output = executeAndGetOutput();
         assertThat(output).containsExactly("stack: 1.4142135623");
+    }
+
+    @Test
+    void test_clear() {
+        givenInput("5 2 +\n" +
+                    "clear\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(2);
+        assertThat(output[0]).isEqualTo("stack: 7");
+        assertThat(output[1]).isEqualTo("stack: ");
+    }
+
+    @Tag("ExampleTest")
+    @DisplayName("Example 2")
+    @Test
+    void test_operations_mixed_with_clear() {
+        givenInput("" +
+                "2 sqrt\n" +
+                "clear 9 sqrt\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(2);
+        assertThat(output[0]).isEqualTo("stack: 1.4142135623");
+        assertThat(output[1]).isEqualTo("stack: 3");
     }
 
 

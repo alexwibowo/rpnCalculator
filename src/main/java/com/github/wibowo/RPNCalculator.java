@@ -24,18 +24,22 @@ public final class RPNCalculator {
 
     private static void processLine(final RPNStack<OperationExecution> operationExecutions,
                                     final String line) {
-        for (final String lineComponent : line.split("\\s+")) {
-            final Operation operation = findOperation(lineComponent);
+        for (final String token : line.split("\\s+")) {
+            final Operation operation = findOperation(token);
             if (operation == Operation.Push) {
-                operationExecutions.push(new OperationExecution(operation, RealNumber.of(lineComponent)));
+                operationExecutions.push(new OperationExecution(operation, RealNumber.of(token)));
             } else if (operation == Operation.Clear) {
-
+                performClear(operationExecutions);
             } else if (operation == Operation.Undo) {
                 performUndo(operationExecutions);
             } else {
                 performOperation(operationExecutions, operation);
             }
         }
+    }
+
+    private static void performClear(final RPNStack<OperationExecution> operationExecutions) {
+        operationExecutions.clear();
     }
 
     private static void performOperation(final RPNStack<OperationExecution> operationExecutions,
