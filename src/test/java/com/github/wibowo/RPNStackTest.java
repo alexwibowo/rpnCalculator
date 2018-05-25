@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RPNStackTest {
 
-    private RPNStack stack = new RPNStack();
+    private RPNStack<RealNumber> stack = new RPNStack<>();
 
     @Test
     void print_empty_stack() {
@@ -17,7 +17,7 @@ class RPNStackTest {
     }
 
     @Test
-    void add_new_item_to_stack() throws Exception {
+    void add_new_item_to_stack() {
         final RealNumber number = RealNumber.of("42.0");
 
         stack.push(number);
