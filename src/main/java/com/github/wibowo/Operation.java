@@ -1,5 +1,7 @@
 package com.github.wibowo;
 
+import com.google.common.base.Preconditions;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,8 +42,10 @@ public enum Operation {
     },
     Push("",0) {
         @Override
-        public RealNumber evaluate(List<RealNumber> arguments) {
-            throw new UnsupportedOperationException("Should not call evaluate on Push command. This might be a programming issue.");
+        public RealNumber evaluate(final List<RealNumber> arguments) {
+            Preconditions.checkArgument(arguments.size() == 1,
+                    "Unexpected argument to push operation. Push operation expects only 1 argument. Received: {}", arguments);
+            return arguments.get(0);
         }
 
         @Override

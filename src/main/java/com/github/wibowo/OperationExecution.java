@@ -35,4 +35,9 @@ public final class OperationExecution {
     public RealNumber getResult() {
         return result;
     }
+
+    @Override
+    public String toString() {
+        return result.toString();
+    }
 }

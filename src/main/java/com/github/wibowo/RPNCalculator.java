@@ -15,35 +15,40 @@ public final class RPNCalculator {
         LOGGER.info("RPN Calculator");
 
         final Scanner scanner = new Scanner(System.in);
-        final RPNStack<OperationExecution> operatorStack = new RPNStack<>();
-
+        final RPNStack<OperationExecution> operationExecutions = new RPNStack<>();
         while (scanner.hasNextLine()) {
-            final String[] split = scanner.nextLine().split("\\s+");
-            for (final String s : split) {
-                final Operation operation = findOperation(s);
-                if (operation == Operation.Push) {
-                    operatorStack.push(new OperationExecution(operation, RealNumber.of(s)));
-                } else if (operation == Operation.Clear) {
-
-                } else if (operation == Operation.Undo) {
-                    final OperationExecution pop = operatorStack.pop();
-                    final List<RealNumber> arguments = pop.getArguments();
-                    for (RealNumber argument : arguments) {
-                        operatorStack.push(new OperationExecution(Operation.Push, argument));
-                    }
-                } else {
-                    final Iterable<OperationExecution> executions = operatorStack.pop(operation.numArguments);
-                    final List<RealNumber> arguments = StreamSupport.stream(executions.spliterator(), false)
-                            .map(OperationExecution::getResult)
-                            .collect(Collectors.toList());
-                    final OperationExecution operationExecution = new OperationExecution(operation, arguments);
-                    operatorStack.push(operationExecution);
-                }
-
+            final String line = scanner.nextLine();
+            if (!line.trim().isEmpty()) {
+                processLine(operationExecutions, line);
             }
-            System.out.println(operatorStack.toString());
+            System.out.println(operationExecutions.toString());
         }
 
+    }
+
+    private static void processLine(final RPNStack<OperationExecution> operatorStack,
+                                    final String line) {
+        for (final String lineComponent : line.split("\\s+")) {
+            final Operation operation = findOperation(lineComponent);
+            if (operation == Operation.Push) {
+                operatorStack.push(new OperationExecution(operation, RealNumber.of(lineComponent)));
+            } else if (operation == Operation.Clear) {
+
+            } else if (operation == Operation.Undo) {
+                final OperationExecution pop = operatorStack.pop();
+                final List<RealNumber> arguments = pop.getArguments();
+                for (RealNumber argument : arguments) {
+                    operatorStack.push(new OperationExecution(Operation.Push, argument));
+                }
+            } else {
+                final Iterable<OperationExecution> executions = operatorStack.pop(operation.numArguments);
+                final List<RealNumber> arguments = StreamSupport.stream(executions.spliterator(), false)
+                        .map(OperationExecution::getResult)
+                        .collect(Collectors.toList());
+                final OperationExecution operationExecution = new OperationExecution(operation, arguments);
+                operatorStack.push(operationExecution);
+            }
+        }
     }
 
     private static Operation findOperation(final String operationString) throws CalculatorException {
