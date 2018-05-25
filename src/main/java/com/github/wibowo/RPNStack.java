@@ -49,4 +49,7 @@ public class RPNStack<E> {
         return expressions;
     }
 
+    public void clear() {
+        stack.clear();
+    }
 }

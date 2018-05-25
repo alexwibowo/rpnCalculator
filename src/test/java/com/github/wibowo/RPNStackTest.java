@@ -29,4 +29,15 @@ class RPNStackTest {
         assertThat(stack.pop())
                 .isSameAs(number);
     }
+
+    @Test
+    void clear_stack() {
+        final RealNumber number = RealNumber.of("42.0");
+
+        stack.push(number).clear();
+        assertThat(stack.size())
+                .isEqualTo(0);
+        assertThat(stack.toString())
+                .isEqualTo("stack: ");
+    }
 }
