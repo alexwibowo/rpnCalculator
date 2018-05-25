@@ -24,16 +24,15 @@ public enum Operation {
     },
     Sqrt("sqrt", 1) {
         @Override
-        public RealNumber evaluate(List<RealNumber> arguments) {
+        public RealNumber evaluate(final List<RealNumber> arguments) {
             throw new RuntimeException("Not implemented yet");
 
         }
     },
     Undo("undo",0) {
         @Override
-        public RealNumber evaluate(List<RealNumber> arguments) {
-            throw new RuntimeException("Not implemented yet");
-
+        public RealNumber evaluate(final List<RealNumber> arguments) {
+            throw new UnsupportedOperationException("Should not try to evaluate Undo operation. This is most likely a programming error.");
         }
     },
     Clear("clear",0) {

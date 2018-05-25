@@ -1,15 +1,11 @@
 package com.github.wibowo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public final class RPNCalculator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RPNCalculator.class);
 
     public static void main(String[] args) throws CalculatorException {
         System.out.println("RPN Calculator");
@@ -37,8 +33,9 @@ public final class RPNCalculator {
             } else if (operation == Operation.Undo) {
                 final OperationExecution pop = operatorStack.pop();
                 final List<RealNumber> arguments = pop.getArguments();
-                for (RealNumber argument : arguments) {
-                    operatorStack.push(new OperationExecution(Operation.Push, argument));
+                for (int i = arguments.size()-1; i >= 0; i--) {
+                    final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
+                    operatorStack.push(operationExecution);
                 }
             } else {
                 final Iterable<OperationExecution> executions = operatorStack.pop(operation.numArguments);
