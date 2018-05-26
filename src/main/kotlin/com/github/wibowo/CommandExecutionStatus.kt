@@ -1,4 +1,4 @@
-package com.github.wibowo;
+package com.github.wibowo
 
 /**
  * A command consist of one or more tokens provided by user.
@@ -7,7 +7,7 @@ package com.github.wibowo;
  *
  * This status indicates the overall execution status for this command (i.e. both tokens)
  */
-public enum CommandExecutionStatus {
+enum class CommandExecutionStatus {
     Success,
     Failed
 }
