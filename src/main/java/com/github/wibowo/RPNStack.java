@@ -36,7 +36,10 @@ public final class RPNStack<E> {
         return stack.pop();
     }
 
-    public Iterable<E> pop(final int count) throws IllegalStateException {
+    public Iterable<E> pop(final int count) throws IllegalStateException, EmptyStackException {
+        if (stack.isEmpty()) {
+            throw new EmptyStackException();
+        }
         if (stack.size() < count) {
             throw new IllegalStateException("Not enough item in stack. Current stack size is " + stack.size());
         }

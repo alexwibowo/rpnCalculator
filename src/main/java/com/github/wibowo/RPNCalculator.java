@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -81,8 +79,18 @@ public final class RPNCalculator {
             final List<RealNumber> arguments = stream(executions.spliterator(), false)
                     .map(OperationExecution::getResult)
                     .collect(toList());
-            operationExecutions.push(new OperationExecution(operation, arguments));
-            return OperationExecutionStatus.Success;
+            try {
+                operationExecutions.push(new OperationExecution(operation, arguments));
+                return OperationExecutionStatus.Success;
+            } catch (final Exception exception) {
+                // rollback first
+                rollback(operationExecutions, arguments);
+
+                // then return error
+                final Integer operationPosition = operationPositionFinder.get();
+                LOGGER.warn("operator {} (position: {}): operation execution failed due to: [{}]", operation.command(), operationPosition, exception.getMessage());
+                return OperationExecutionStatus.Failed;
+            }
         }
     }
 
@@ -90,12 +98,17 @@ public final class RPNCalculator {
         final OperationExecution pop = operationExecutions.pop();
         if (pop.getOperation().pushArgumentsOnUndo) {
             final List<RealNumber> arguments = pop.getArguments();
-            for (int i = arguments.size()-1; i >= 0; i--) {
-                final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
-                operationExecutions.push(operationExecution);
-            }
+            rollback(operationExecutions, arguments);
         }
         return OperationExecutionStatus.Success;
+    }
+
+    private static void rollback(final RPNStack<OperationExecution> operationExecutions,
+                                 final List<RealNumber> arguments) {
+        for (int i = arguments.size()-1; i >= 0; i--) {
+            final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
+            operationExecutions.push(operationExecution);
+        }
     }
 
     private static Operation findOperation(final String operationString) throws CalculatorException {

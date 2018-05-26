@@ -234,6 +234,14 @@ class RPNCalculatorAcceptanceTest {
 
     @Test
     void test_division_by_zero() {
+        givenInput("" +
+                "1 2 3 0 / + * * 6 5\n" +
+                "+ 5\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(3);
+        assertThat(output[0]).isEqualTo("operator / (position: 9): operation execution failed due to: [/ by zero]");
+        assertThat(output[1]).isEqualTo("stack: 1 2 3 0");
+        assertThat(output[2]).isEqualTo("stack: 1 2 3 5");
 
     }
 
@@ -259,13 +267,6 @@ class RPNCalculatorAcceptanceTest {
                 .filter(message -> !Objects.equals(message, RPNCalculator.BANNER_MESSAGE))
                 .toArray(String[]::new);
 
-    }
-
-    @NotNull
-    private ByteArrayOutputStream setupOutput() {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos));
-        return baos;
     }
 
     private void givenInput(final String input) {

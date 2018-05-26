@@ -12,6 +12,8 @@ class OperationTest {
     void test_dictionary() {
         assertNotNull(Operation.dictionary.get("+"));
         assertNotNull(Operation.dictionary.get("-"));
+        assertNotNull(Operation.dictionary.get("*"));
+        assertNotNull(Operation.dictionary.get("/"));
         assertNotNull(Operation.dictionary.get("sqrt"));
         assertNotNull(Operation.dictionary.get("undo"));
         assertNotNull(Operation.dictionary.get("clear"));
@@ -21,6 +23,8 @@ class OperationTest {
     void test_operation_matching() {
         assertTrue(Operation.Plus.matches("+"));
         assertTrue(Operation.Minus.matches("-"));
+        assertTrue(Operation.Multiply.matches("*"));
+        assertTrue(Operation.Divide.matches("/"));
         assertTrue(Operation.Sqrt.matches("sqrt"));
         assertTrue(Operation.Undo.matches("undo"));
         assertTrue(Operation.Clear.matches("clear"));
@@ -109,6 +113,13 @@ class OperationTest {
     }
 
     @Test
+    void test_divide_by_zero() {
+        final ArithmeticException arithmeticException = assertThrows(ArithmeticException.class, () -> Operation.Divide.evaluate(TestHelper.getArguments("0", "4")));
+        assertThat(arithmeticException.getMessage())
+                .isEqualTo("/ by zero");
+    }
+
+    @Test
     void undo_cant_be_evaluated() {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> Operation.Undo.evaluate(TestHelper.getArguments("4", "42")));
         assertThat(exception.getMessage()).isEqualTo("Should not try to evaluate Undo operation. This is most likely a programming error.");
@@ -118,6 +129,24 @@ class OperationTest {
     void clear_cant_be_evaluated() {
         final UnsupportedOperationException exception =  assertThrows(UnsupportedOperationException.class, () -> Operation.Clear.evaluate(TestHelper.getArguments("4", "42")));
         assertThat(exception.getMessage()).isEqualTo("Should not try to evaluate Clear operation. This is most likely a programming error.");
+    }
+
+    @Test
+    void UnsupportedOperation_cant_be_evaluated() {
+        final UnsupportedOperationException exception =  assertThrows(UnsupportedOperationException.class, () -> Operation.UnsupportedOperation.evaluate(TestHelper.getArguments("4", "42")));
+        assertThat(exception.getMessage()).isEqualTo("Should not try to evaluate UnsupportedOperation operation. This is most likely a programming error.");
+    }
+
+    @Test
+    void UnsupportedOperation_should_not_match_any_existing_operation() {
+        assertThat(Operation.UnsupportedOperation.matches("+")).isFalse();
+        assertThat(Operation.UnsupportedOperation.matches("-")).isFalse();
+        assertThat(Operation.UnsupportedOperation.matches("*")).isFalse();
+        assertThat(Operation.UnsupportedOperation.matches("/")).isFalse();
+        assertThat(Operation.UnsupportedOperation.matches("sqrt")).isFalse();
+        assertThat(Operation.UnsupportedOperation.matches("undo")).isFalse();
+        assertThat(Operation.UnsupportedOperation.matches("clear")).isFalse();
+
     }
 
     @Test
