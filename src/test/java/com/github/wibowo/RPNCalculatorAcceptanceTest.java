@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Objects;
 
@@ -269,11 +268,15 @@ class RPNCalculatorAcceptanceTest {
 
     }
 
-    private void givenInput(final String input) {
-        System.setIn(
-                new ByteArrayInputStream((input + "\n") // add new line to end program
-                        .getBytes())
-        );
+    private void givenInput(final String input)  {
+        try {
+            System.setIn(
+                    new ByteArrayInputStream((input + "\n") // add new line to end program
+                            .getBytes("UTF-8"))
+            );
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

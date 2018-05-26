@@ -16,7 +16,7 @@ public final class RPNCalculator {
 
     public static void main(final String[] args) throws CalculatorException {
         LOGGER.info(BANNER_MESSAGE);
-        final Scanner scanner = new Scanner(System.in);
+        final Scanner scanner = new Scanner(System.in, "UTF-8");
 
         final RPNStack<OperationExecution> operationExecutions = new RPNStack<>();
         while (scanner.hasNextLine()) {
