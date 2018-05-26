@@ -164,6 +164,47 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output).containsExactly("stack: 10000000");
     }
 
+    @Tag("ExampleTest")
+    @DisplayName("Example 6")
+    @Test
+    void test_negative_number() {
+        givenInput("" +
+                "1 2 3 4 5\n" +
+                "*\n"+
+                "clear 3 4 -\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(3);
+        assertThat(output[0]).isEqualTo("stack: 1 2 3 4 5");
+        assertThat(output[1]).isEqualTo("stack: 1 2 3 20");
+        assertThat(output[2]).isEqualTo("stack: -1");
+    }
+
+    @Tag("ExampleTest")
+    @DisplayName("Example 7")
+    @Test
+    void test_multiple_multiplication() {
+        givenInput("" +
+                "1 2 3 4 5\n" +
+                "* * * *\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(2);
+        assertThat(output[0]).isEqualTo("stack: 1 2 3 4 5");
+        assertThat(output[1]).isEqualTo("stack: 120");
+    }
+
+    @Tag("ExampleTest")
+    @DisplayName("Example 8")
+    @Test
+    void test_invalid() {
+        givenInput("" +
+                "1 2 3 * 5 + * * 6 5\n" +
+                "* * * *\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(2);
+        assertThat(output[0]).isEqualTo("operator * (position: 15): insufficient parameters");
+        assertThat(output[1]).isEqualTo("stack: 11");
+    }
+
     @NotNull
     private String[] executeAndGetOutput() {
         final ByteArrayOutputStream outputStream = setupOutput();
