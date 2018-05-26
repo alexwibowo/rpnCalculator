@@ -71,6 +71,9 @@ dependencies {
 
 		compile group: 'com.lmax', name: 'disruptor', version:"${lmaxDisruptorVersion}"
 
+		testCompile "org.mockito:mockito-core:2.18.3"
+		testCompile group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4j2Version}", classifier: "tests"
+
 		testCompile "org.assertj:assertj-core:${assertjVersion}"
 		testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterEngineVersion}"
 		testCompile "org.junit.jupiter:junit-jupiter-engine:${junitJupiterEngineVersion}"

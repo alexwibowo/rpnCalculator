@@ -1,23 +1,51 @@
 package com.github.wibowo;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.test.appender.ListAppender;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RPNCalculatorAcceptanceTest {
 
+    private ListAppender listAppender;
+    private LoggerConfig rootLoggerConfig;
+
+    @BeforeEach
+    void setUp() {
+        final org.apache.logging.log4j.core.LoggerContext loggerContext = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
+        final Configuration configuration = loggerContext.getConfiguration();
+        rootLoggerConfig = configuration.getLoggerConfig("");
+
+        listAppender = new ListAppender("testAppender");
+        listAppender.start();
+        rootLoggerConfig.addAppender(listAppender, Level.ALL, null);
+    }
+
+    @AfterEach
+    void tearDown() {
+        listAppender.stop();
+        rootLoggerConfig.removeAppender("testAppender");
+    }
+
     @Test
     void push_single_number_to_stack() {
         givenInput("5\n");
+
         final String[] output = executeAndGetOutput();
+
         assertThat(output).containsExactly("stack: 5");
     }
 
@@ -197,21 +225,27 @@ class RPNCalculatorAcceptanceTest {
     @Test
     void test_invalid() {
         givenInput("" +
-                "1 2 3 * 5 + * * 6 5\n" +
-                "* * * *\n");
+                "1 2 3 * 5 + * * 6 5\n");
         final String[] output = executeAndGetOutput();
         assertThat(output.length).isEqualTo(2);
         assertThat(output[0]).isEqualTo("operator * (position: 15): insufficient parameters");
         assertThat(output[1]).isEqualTo("stack: 11");
     }
 
+    @Test
+    void test_division_by_zero() {
+
+    }
+
     @NotNull
     private String[] executeAndGetOutput() {
-        final ByteArrayOutputStream outputStream = setupOutput();
         RPNCalculator.main(new String[]{});
-        final String actual = outputStream.toString();
-        final String[] split = actual.split("\\r?\\n");
-        return Arrays.copyOfRange(split, 1, split.length);
+
+        final List<LogEvent> events = listAppender.getEvents();
+        return events.stream().map(LogEvent::getMessage).map(Message::getFormattedMessage)
+                .filter(message -> !Objects.equals(message, RPNCalculator.BANNER_MESSAGE))
+                .toArray(String[]::new);
+
     }
 
     @NotNull

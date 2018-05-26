@@ -1,58 +1,90 @@
 package com.github.wibowo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
+
 public final class RPNCalculator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RPNCalculator.class);
+    public static final String BANNER_MESSAGE = "RPN Calculator";
 
     public static void main(final String[] args) throws CalculatorException {
-        System.out.println("RPN Calculator");
-
+        LOGGER.info(BANNER_MESSAGE);
         final Scanner scanner = new Scanner(System.in);
         final RPNStack<OperationExecution> operationExecutions = new RPNStack<>();
         while (scanner.hasNextLine()) {
             final String line = scanner.nextLine();
             if (!line.trim().isEmpty()) {
-                processLine(operationExecutions, line);
-                System.out.println(operationExecutions.toString());
+                try {
+                    processLine(operationExecutions, line);
+                } finally {
+                    LOGGER.info("{}", operationExecutions);
+                }
             }
         }
-
     }
 
-    private static void processLine(final RPNStack<OperationExecution> operationExecutions,
+    private static OperationExecutionStatus processLine(final RPNStack<OperationExecution> operationExecutions,
                                     final String line) {
-        for (final String token : line.split("\\s+")) {
+        final String[] tokens = line.split("\\s+");
+        OperationExecutionStatus currentStatus = OperationExecutionStatus.Success;
+        for (int i = 0; i < tokens.length; i++) {
+            final String token = tokens[i];
             final Operation operation = findOperation(token);
             if (operation == Operation.Push) {
                 operationExecutions.push(new OperationExecution(operation, RealNumber.of(token)));
             } else if (operation == Operation.Clear) {
-                performClear(operationExecutions);
+                currentStatus = performClear(operationExecutions);
             } else if (operation == Operation.Undo) {
-                performUndo(operationExecutions);
+                currentStatus = performUndo(operationExecutions);
             } else {
-                performOperation(operationExecutions, operation);
+                final int operationIndex = i;
+                currentStatus = performOperation(operationExecutions, operation, new Supplier<Integer>() {
+                    @Override
+                    public Integer get() {
+                        return CommandStringHelper.findTokenPositionInOriginalLine(line, operationIndex);
+                    }
+                });
             }
+
+            if (currentStatus == OperationExecutionStatus.Failed) {
+                return currentStatus;
+            }
+        }
+        return currentStatus;
+    }
+
+    private static OperationExecutionStatus performClear(final RPNStack<OperationExecution> operationExecutions) {
+        operationExecutions.clear();
+        return OperationExecutionStatus.Success;
+    }
+
+    private static OperationExecutionStatus performOperation(final RPNStack<OperationExecution> operationExecutions,
+                                         final Operation operation,
+                                         final Supplier<Integer> operationPositionFinder) {
+        if (operationExecutions.size() < operation.numArguments) {
+            final Integer operationPosition = operationPositionFinder.get();
+            LOGGER.warn("operator {} (position: {}): insufficient parameters", operation.command(), operationPosition);
+            return OperationExecutionStatus.Failed;
+        } else {
+            final Iterable<OperationExecution> executions = operationExecutions.pop(operation.numArguments);
+            final List<RealNumber> arguments = stream(executions.spliterator(), false)
+                    .map(OperationExecution::getResult)
+                    .collect(toList());
+            operationExecutions.push(new OperationExecution(operation, arguments));
+            return OperationExecutionStatus.Success;
         }
     }
 
-    private static void performClear(final RPNStack<OperationExecution> operationExecutions) {
-        operationExecutions.clear();
-    }
-
-    private static void performOperation(final RPNStack<OperationExecution> operationExecutions,
-                                         final Operation operation) {
-        final Iterable<OperationExecution> executions = operationExecutions.pop(operation.numArguments);
-        final List<RealNumber> arguments = StreamSupport.stream(executions.spliterator(), false)
-                .map(OperationExecution::getResult)
-                .collect(Collectors.toList());
-        final OperationExecution operationExecution = new OperationExecution(operation, arguments);
-        operationExecutions.push(operationExecution);
-    }
-
-    private static void performUndo(final RPNStack<OperationExecution> operationExecutions) {
+    private static OperationExecutionStatus performUndo(final RPNStack<OperationExecution> operationExecutions) {
         final OperationExecution pop = operationExecutions.pop();
         if (pop.getOperation().pushArgumentsOnUndo) {
             final List<RealNumber> arguments = pop.getArguments();
@@ -61,6 +93,7 @@ public final class RPNCalculator {
                 operationExecutions.push(operationExecution);
             }
         }
+        return OperationExecutionStatus.Success;
     }
 
     private static Operation findOperation(final String operationString) throws CalculatorException {
