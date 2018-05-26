@@ -237,6 +237,19 @@ class RPNCalculatorAcceptanceTest {
 
     }
 
+    @Test
+    void test_invalid_operation() {
+        givenInput("" +
+                "1 2 (\n" +
+                "5 +\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(3);
+        assertThat(output[0]).isEqualTo("operator ( (position: 4): unsupported operation");
+        assertThat(output[1]).isEqualTo("stack: 1 2");
+        assertThat(output[2]).isEqualTo("stack: 1 7");
+    }
+
+
     @NotNull
     private String[] executeAndGetOutput() {
         RPNCalculator.main(new String[]{});

@@ -6,8 +6,4 @@ public class CalculatorException extends RuntimeException {
         super(message);
     }
 
-    public CalculatorException(final String message,
-                               final Throwable cause) {
-        super(message, cause);
-    }
 }

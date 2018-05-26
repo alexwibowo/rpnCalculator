@@ -33,7 +33,7 @@ public final class RPNCalculator {
     }
 
     private static OperationExecutionStatus processLine(final RPNStack<OperationExecution> operationExecutions,
-                                    final String line) {
+                                                        final String line) {
         final String[] tokens = line.split("\\s+");
         OperationExecutionStatus currentStatus = OperationExecutionStatus.Success;
         for (int i = 0; i < tokens.length; i++) {
@@ -45,6 +45,8 @@ public final class RPNCalculator {
                 currentStatus = performClear(operationExecutions);
             } else if (operation == Operation.Undo) {
                 currentStatus = performUndo(operationExecutions);
+            } else if (operation == Operation.UnsupportedOperation) {
+                LOGGER.warn("operator {} (position: {}): unsupported operation", token, line.indexOf(token));
             } else {
                 final int operationIndex = i;
                 currentStatus = performOperation(operationExecutions, operation, new Supplier<Integer>() {
@@ -100,11 +102,10 @@ public final class RPNCalculator {
         final Operation operation = Operation.dictionary.get(operationString);
         if (operation != null) {
             return operation;
+        } else if (Operation.Push.matches(operationString)) {
+            return Operation.Push;
         } else {
-            if (Operation.Push.matches(operationString)) {
-                return Operation.Push;
-            }
+            return Operation.UnsupportedOperation;
         }
-        throw new CalculatorException(String.format("Unsupported operation [%s]", operationString));
     }
 }

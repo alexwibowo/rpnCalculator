@@ -109,6 +109,18 @@ class OperationTest {
     }
 
     @Test
+    void undo_cant_be_evaluated() {
+        final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> Operation.Undo.evaluate(TestHelper.getArguments("4", "42")));
+        assertThat(exception.getMessage()).isEqualTo("Should not try to evaluate Undo operation. This is most likely a programming error.");
+    }
+
+    @Test
+    void clear_cant_be_evaluated() {
+        final UnsupportedOperationException exception =  assertThrows(UnsupportedOperationException.class, () -> Operation.Clear.evaluate(TestHelper.getArguments("4", "42")));
+        assertThat(exception.getMessage()).isEqualTo("Should not try to evaluate Clear operation. This is most likely a programming error.");
+    }
+
+    @Test
     void whitespace_should_be_trimmed_for_number() {
         assertFalse(Operation.Push.matches("   0.0009    "));
     }

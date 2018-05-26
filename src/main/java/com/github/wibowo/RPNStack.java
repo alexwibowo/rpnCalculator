@@ -5,7 +5,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.joining;
 
-public class RPNStack<E> {
+public final class RPNStack<E> {
 
     private final java.util.LinkedList<E> stack;
 

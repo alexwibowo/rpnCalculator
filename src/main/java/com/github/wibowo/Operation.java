@@ -67,8 +67,7 @@ public enum Operation {
     Clear("clear",0, false) {
         @Override
         public RealNumber evaluate(List<RealNumber> arguments) {
-            throw new RuntimeException("Not implemented yet");
-
+            throw new UnsupportedOperationException("Should not try to evaluate Clear operation. This is most likely a programming error.");
         }
     },
     Push("",0, false) {
@@ -82,6 +81,17 @@ public enum Operation {
         @Override
         public boolean matches(String operationString) {
             return operationString.matches("^[-+]?[0-9]*\\.?[0-9]+$");
+        }
+    },
+    UnsupportedOperation("", 0, false){
+        @Override
+        public RealNumber evaluate(final List<RealNumber> arguments) {
+            throw new UnsupportedOperationException("Should not try to evaluate UnsupportedOperation operation. This is most likely a programming error.");
+        }
+
+        @Override
+        public boolean matches(String operationString) {
+            return false;
         }
     };
 

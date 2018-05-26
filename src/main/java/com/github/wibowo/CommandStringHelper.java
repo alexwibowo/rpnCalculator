@@ -1,8 +1,11 @@
 package com.github.wibowo;
 
-public class CommandStringHelper {
+public final class CommandStringHelper {
+
+    private CommandStringHelper() {}
 
     /**
+     *
      * remainingLine = [1 2 3 * 5 + * * 6 5]
      * tokens: [1,2,3,*,5,+,*,*,6,5]
      * tokenIndex=7
@@ -15,7 +18,9 @@ public class CommandStringHelper {
      *
      * then: find "* * 6 5" in the original line
      *
-     * @param tokenIndex 0 based
+     * @param line command line
+     * @param tokenIndex 0 based index of the token in the list of parsed tokens
+     * @return string index of token in the original line
      */
     public static int findTokenPositionInOriginalLine(final String line,
                                                        final int tokenIndex) {
