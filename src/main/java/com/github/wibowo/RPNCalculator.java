@@ -17,6 +17,7 @@ public final class RPNCalculator {
     public static void main(final String[] args) throws CalculatorException {
         LOGGER.info(BANNER_MESSAGE);
         final Scanner scanner = new Scanner(System.in);
+
         final RPNStack<OperationExecution> operationExecutions = new RPNStack<>();
         while (scanner.hasNextLine()) {
             final String line = scanner.nextLine();
@@ -30,10 +31,10 @@ public final class RPNCalculator {
         }
     }
 
-    private static OperationExecutionStatus processLine(final RPNStack<OperationExecution> operationExecutions,
-                                                        final String line) {
+    private static CommandExecutionStatus processLine(final RPNStack<OperationExecution> operationExecutions,
+                                                      final String line) {
         final String[] tokens = line.split("\\s+");
-        OperationExecutionStatus currentStatus = OperationExecutionStatus.Success;
+        CommandExecutionStatus currentStatus = CommandExecutionStatus.Success;
         for (int i = 0; i < tokens.length; i++) {
             final String token = tokens[i];
             final Operation operation = findOperation(token);
@@ -50,30 +51,30 @@ public final class RPNCalculator {
                 currentStatus = performOperation(operationExecutions, operation, new Supplier<Integer>() {
                     @Override
                     public Integer get() {
-                        return CommandStringHelper.findTokenPositionInOriginalLine(line, operationIndex);
+                        return TokenPositionFinder.findTokenPositionInOriginalLine(line, operationIndex);
                     }
                 });
             }
 
-            if (currentStatus == OperationExecutionStatus.Failed) {
+            if (currentStatus == CommandExecutionStatus.Failed) {
                 return currentStatus;
             }
         }
         return currentStatus;
     }
 
-    private static OperationExecutionStatus performClear(final RPNStack<OperationExecution> operationExecutions) {
+    private static CommandExecutionStatus performClear(final RPNStack<OperationExecution> operationExecutions) {
         operationExecutions.clear();
-        return OperationExecutionStatus.Success;
+        return CommandExecutionStatus.Success;
     }
 
-    private static OperationExecutionStatus performOperation(final RPNStack<OperationExecution> operationExecutions,
-                                         final Operation operation,
-                                         final Supplier<Integer> operationPositionFinder) {
+    private static CommandExecutionStatus performOperation(final RPNStack<OperationExecution> operationExecutions,
+                                                           final Operation operation,
+                                                           final Supplier<Integer> operationPositionFinder) {
         if (operationExecutions.size() < operation.numArguments) {
             final Integer operationPosition = operationPositionFinder.get();
             LOGGER.warn("operator {} (position: {}): insufficient parameters", operation.command(), operationPosition);
-            return OperationExecutionStatus.Failed;
+            return CommandExecutionStatus.Failed;
         } else {
             final Iterable<OperationExecution> executions = operationExecutions.pop(operation.numArguments);
             final List<RealNumber> arguments = stream(executions.spliterator(), false)
@@ -81,7 +82,7 @@ public final class RPNCalculator {
                     .collect(toList());
             try {
                 operationExecutions.push(new OperationExecution(operation, arguments));
-                return OperationExecutionStatus.Success;
+                return CommandExecutionStatus.Success;
             } catch (final Exception exception) {
                 // rollback first
                 rollback(operationExecutions, arguments);
@@ -89,18 +90,18 @@ public final class RPNCalculator {
                 // then return error
                 final Integer operationPosition = operationPositionFinder.get();
                 LOGGER.warn("operator {} (position: {}): operation execution failed due to: [{}]", operation.command(), operationPosition, exception.getMessage());
-                return OperationExecutionStatus.Failed;
+                return CommandExecutionStatus.Failed;
             }
         }
     }
 
-    private static OperationExecutionStatus performUndo(final RPNStack<OperationExecution> operationExecutions) {
+    private static CommandExecutionStatus performUndo(final RPNStack<OperationExecution> operationExecutions) {
         final OperationExecution pop = operationExecutions.pop();
         if (pop.getOperation().pushArgumentsOnUndo) {
             final List<RealNumber> arguments = pop.getArguments();
             rollback(operationExecutions, arguments);
         }
-        return OperationExecutionStatus.Success;
+        return CommandExecutionStatus.Success;
     }
 
     private static void rollback(final RPNStack<OperationExecution> operationExecutions,

@@ -5,6 +5,13 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Basic stack implementation using {@link LinkedList}.
+ * It adds the convenient method for popping two tokens at the same time.
+ *
+ * @see #pop(int)
+ * @param <E> the type of elements held in this collection
+ */
 public final class RPNStack<E> {
 
     private final java.util.LinkedList<E> stack;
