@@ -48,6 +48,15 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output).containsExactly("stack: 5");
     }
 
+    @Test
+    void able_to_receive_leading_whitespaces() {
+        givenInput("    5       4\n");
+
+        final String[] output = executeAndGetOutput();
+
+        assertThat(output).containsExactly("stack: 5 4");
+    }
+
     @Tag("ExampleTest")
     @DisplayName("Example 1")
     @Test

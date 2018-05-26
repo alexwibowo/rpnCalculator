@@ -33,7 +33,7 @@ public final class RPNCalculator {
 
     private static CommandExecutionStatus processLine(final RPNStack<OperationExecution> operationExecutions,
                                                       final String line) {
-        final String[] tokens = line.split("\\s+");
+        final String[] tokens = line.trim().split("\\s+");
         CommandExecutionStatus currentStatus = CommandExecutionStatus.Success;
         for (int i = 0; i < tokens.length; i++) {
             final String token = tokens[i];
