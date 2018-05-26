@@ -38,22 +38,22 @@ public final class RealNumber  {
     public static RealNumber of(final String constantAsString,
                                 final int scale) {
         Objects.requireNonNull(constantAsString);
-        return new RealNumber(
+        return of(
                 new BigDecimal(constantAsString)
-                    .setScale(scale, DEFAULT_ROUNDING_MODE)
-                    .stripTrailingZeros()
+                        .setScale(scale, DEFAULT_ROUNDING_MODE)
         );
     }
 
     public static RealNumber of(final BigDecimal number) {
-        return new RealNumber(number);
+        return new RealNumber(
+                number.stripTrailingZeros()
+        );
     }
 
     public static RealNumber of(double number) {
-        return new RealNumber(
+        return of(
                 new BigDecimal(number)
-                    .setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE)
-                    .stripTrailingZeros()
+                        .setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE)
         );
     }
 

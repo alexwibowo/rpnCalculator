@@ -27,7 +27,7 @@ class RealNumberTest {
     void eval_value_from_bigDecimal() {
         final BigDecimal source = new BigDecimal("42.12345");
         assertThat(RealNumber.of(source).eval())
-                .isSameAs(source);
+                .isEqualTo(source);
     }
 
     @Test
