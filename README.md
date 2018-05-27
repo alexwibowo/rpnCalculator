@@ -31,3 +31,24 @@ The calculator has a stack that can contain real numbers.
 * *gradle shadowJar*: to produce uber jar. You should be able to find rpnCalculator-all.jar inside the build/libs directory
 * *gradle clean test check*: to run test along with static analysis of the code
 * *gradle clean test jacocoTestReport*: to produce coverage test report
+
+## Design
+
+A command given by user consists of multiple *token*. Each token is wrapped into *OperationExecution* and pushed into the *RPNStack*.
+
+An *OperationExecution* encapsulates:
+1. Operation type
+2. Arguments to the operation
+3. Result of the operation execution
+
+E.g. given command "5 2 +", this will result in three *OperationExecution* being pushed into the stack.
+1. [PUSH | <5> | <5>], with stack of [5]
+2. [PUSH | <2> | <2>], with stack of [5 2]
+3. [PLUS | <2, 5> | <10>], with stack of [10]
+
+Say the next operation given by user is *Undo*, then we simply pop the stack, which is [PLUS | <2, 5> | <10>].
+We get the arguments, and pushed them back into the stack. 
+
+The alternative design is to have "revert" method on each *Operation*. This way we dont need to store all arguments. E.g. to 
+revert a plus, we simply subtract. To revert a division, we multiply. However, there is a drawback with this approach. With the division, for example,
+we cant get the **exact** stack state prior to executing the operation (due to number rounding).
