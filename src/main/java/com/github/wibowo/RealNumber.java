@@ -7,6 +7,12 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+/**
+ * Abstraction of number, with default formatting and scaling
+ *
+ * Default scaling used is {@link #DEFAULT_SCALE}, unless specified {@link RealNumber#of(String, int)}
+ * Note that the {@link #DEFAULT_SCALE} is always used for the String representation.
+ */
 public final class RealNumber  {
     public static final int DEFAULT_SCALE = 10;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.FLOOR;
@@ -21,6 +27,12 @@ public final class RealNumber  {
 
     private final BigDecimal value;
 
+    /**
+     * Construct instance of this class from String, with default scaling.
+     *
+     * @param numberAsString number to construct from
+     * @return instance of this class
+     */
     public static RealNumber of(final @NotNull String numberAsString) {
         Objects.requireNonNull(numberAsString);
         try {
@@ -35,16 +47,29 @@ public final class RealNumber  {
         }
     }
 
-    public static RealNumber of(final @NotNull String constantAsString,
+    /**
+     * Construct instance of this class from String, with specified scaling.
+     *
+     * @param numberAsString number to construct from
+     * @param scale scaling to be used
+     * @return instance of this class
+     */
+    public static RealNumber of(final @NotNull String numberAsString,
                                 final int scale) {
-        Objects.requireNonNull(constantAsString);
+        Objects.requireNonNull(numberAsString);
         return new RealNumber(
-                new BigDecimal(constantAsString)
+                new BigDecimal(numberAsString)
                         .setScale(scale, DEFAULT_ROUNDING_MODE)
                         .stripTrailingZeros()
         );
     }
 
+    /**
+     * Construct from given BigDecimal, with default scaling
+     *
+     * @param number number to construct from
+     * @return instance of this class
+     */
     public static RealNumber of(final @NotNull BigDecimal number) {
         Objects.requireNonNull(number);
         return new RealNumber(

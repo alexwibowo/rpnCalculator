@@ -13,7 +13,7 @@ import static java.util.stream.StreamSupport.stream;
 
 public final class RPNCalculator {
     private static final Logger LOGGER = LoggerFactory.getLogger(RPNCalculator.class);
-    public static final String BANNER_MESSAGE = "RPN Calculator";
+    public static final String BANNER_MESSAGE = "RPN Calculator. Type '?' for supported operations.";
 
     public static void main(final String[] args) throws CalculatorException {
         LOGGER.info(BANNER_MESSAGE);
