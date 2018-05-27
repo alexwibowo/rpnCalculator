@@ -49,6 +49,10 @@ public final class RPNCalculator {
                 LOGGER.warn("operator {} (position: {}): unsupported operation", token, line.indexOf(token));
             } else if (operation == Operation.Help) {
                 LOGGER.info("Supported operations are: {}", Operation.dictionary.keySet());
+            } else if (operation == Operation.Quit) {
+                LOGGER.info("Exiting..");
+                LOGGER.info("{}", operationExecutions);
+                System.exit(0);
             } else {
                 final int operationIndex = i;
                 currentStatus = performOperation(operationExecutions, operation, () -> findTokenPositionInOriginalLine(line, operationIndex));

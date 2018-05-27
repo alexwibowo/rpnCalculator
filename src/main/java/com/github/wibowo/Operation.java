@@ -81,7 +81,8 @@ public enum Operation {
             return false;
         }
     },
-    Help("?", 0, false);
+    Help("?", 0, false),
+    Quit("quit", 0, false);
 
     private static void verifyArguments(final Operation operation,
                                         final List<RealNumber> arguments) {

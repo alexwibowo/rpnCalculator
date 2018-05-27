@@ -18,6 +18,7 @@ class OperationTest {
         assertNotNull(Operation.dictionary.get("undo"));
         assertNotNull(Operation.dictionary.get("clear"));
         assertNotNull(Operation.dictionary.get("?"));
+        assertNotNull(Operation.dictionary.get("quit"));
     }
 
     @Test
@@ -30,6 +31,7 @@ class OperationTest {
         assertTrue(Operation.Undo.matches("undo"));
         assertTrue(Operation.Clear.matches("clear"));
         assertTrue(Operation.Help.matches("?"));
+        assertTrue(Operation.Quit.matches("quit"));
     }
 
     @Test
