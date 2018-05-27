@@ -17,6 +17,7 @@ class OperationTest {
         assertNotNull(Operation.dictionary.get("sqrt"));
         assertNotNull(Operation.dictionary.get("undo"));
         assertNotNull(Operation.dictionary.get("clear"));
+        assertNotNull(Operation.dictionary.get("?"));
     }
 
     @Test
@@ -28,6 +29,7 @@ class OperationTest {
         assertTrue(Operation.Sqrt.matches("sqrt"));
         assertTrue(Operation.Undo.matches("undo"));
         assertTrue(Operation.Clear.matches("clear"));
+        assertTrue(Operation.Help.matches("?"));
     }
 
     @Test
@@ -152,5 +154,21 @@ class OperationTest {
     @Test
     void whitespace_should_be_trimmed_for_number() {
         assertFalse(Operation.Push.matches("   0.0009    "));
+    }
+
+    @Test
+    void operations_are_case_insensitive() {
+        // probably can do this better, by using feature of JUnit5 ?
+        assertThat(Operation.findOperation("SqRT")).isEqualByComparingTo(Operation.Sqrt);
+        assertThat(Operation.findOperation("sqrt")).isEqualByComparingTo(Operation.Sqrt);
+        assertThat(Operation.findOperation("SQRT")).isEqualByComparingTo(Operation.Sqrt);
+
+        assertThat(Operation.findOperation("undo")).isEqualByComparingTo(Operation.Undo);
+        assertThat(Operation.findOperation("UNDO")).isEqualByComparingTo(Operation.Undo);
+        assertThat(Operation.findOperation("uNdo")).isEqualByComparingTo(Operation.Undo);
+
+        assertThat(Operation.findOperation("clear")).isEqualByComparingTo(Operation.Clear);
+        assertThat(Operation.findOperation("CLeaR")).isEqualByComparingTo(Operation.Clear);
+        assertThat(Operation.findOperation("clEAr")).isEqualByComparingTo(Operation.Clear);
     }
 }

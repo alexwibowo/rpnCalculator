@@ -2,6 +2,7 @@ package com.github.wibowo;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -60,23 +61,12 @@ public enum Operation {
             return RealNumber.of(BigDecimalMath.sqrt(firstNumber.eval(), MathContext.DECIMAL64));
         }
     },
-    Undo("undo",0, false) {
+    Undo("undo",0, false),
+    Clear("clear",0, false),
+    Push("", 1, false) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
-            throw new UnsupportedOperationException("Should not try to evaluate Undo operation. This is most likely a programming error.");
-        }
-    },
-    Clear("clear",0, false) {
-        @Override
-        public RealNumber evaluate(List<RealNumber> arguments) {
-            throw new UnsupportedOperationException("Should not try to evaluate Clear operation. This is most likely a programming error.");
-        }
-    },
-    Push("",0, false) {
-        @Override
-        public RealNumber evaluate(final List<RealNumber> arguments) {
-            Preconditions.checkArgument(arguments.size() == 1,
-                    "Unexpected argument to push operation. Push operation expects only 1 argument. Received: {}", arguments);
+            verifyArguments(this, arguments);
             return arguments.get(0);
         }
 
@@ -87,15 +77,11 @@ public enum Operation {
     },
     UnsupportedOperation("", 0, false){
         @Override
-        public RealNumber evaluate(final List<RealNumber> arguments) {
-            throw new UnsupportedOperationException("Should not try to evaluate UnsupportedOperation operation. This is most likely a programming error.");
-        }
-
-        @Override
         public boolean matches(String operationString) {
             return false;
         }
-    };
+    },
+    Help("?", 0, false);
 
     private static void verifyArguments(final Operation operation,
                                         final List<RealNumber> arguments) {
@@ -104,12 +90,20 @@ public enum Operation {
         );
     }
 
-    static final Map<String, Operation> dictionary = complementOf(of(Operation.Push))
+    static final Map<String, Operation> dictionary = complementOf(of(Operation.Push, Operation.UnsupportedOperation))
                 .stream()
                 .collect(toMap(Operation::command, identity()));
 
+    /**
+     * String representation of the command (to match what user will give)
+     */
     final String command;
+
+    /**
+     * Number of arguments required to execute the command
+     */
     final int numArguments;
+
     /**
      * <code>true</code> means that we need to push the argument back to the stack on 'undo' operation
      */
@@ -123,13 +117,32 @@ public enum Operation {
         this.pushArgumentsOnUndo = pushArgumentsOnUndo;
     }
 
+    /**
+     * Find operation for a given String.
+     *
+     * @param operationString operation to be searched for
+     * @return Operation if found, {@link Operation#UnsupportedOperation} otherwise.
+     */
+    public static @NotNull Operation findOperation(final @NotNull String operationString) {
+        final Operation operation = dictionary.get(operationString.toLowerCase());
+        if (operation != null) {
+            return operation;
+        } else if (Push.matches(operationString)) {
+            return Push;
+        } else {
+            return UnsupportedOperation;
+        }
+    }
+
     public String command() {
         return command;
     }
 
-    public abstract RealNumber evaluate(final List<RealNumber> arguments);
+    public RealNumber evaluate(final List<RealNumber> arguments) {
+        throw new UnsupportedOperationException(String.format("Should not try to evaluate %s operation. This is most likely a programming error.", this.name()));
+    }
 
-    public boolean matches(final String operationString){
+    boolean matches(final String operationString){
         return Objects.equals(operationString, command);
     }
 }

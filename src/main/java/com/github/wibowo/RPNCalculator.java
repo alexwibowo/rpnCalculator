@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
+import static com.github.wibowo.TokenPositionFinder.findTokenPositionInOriginalLine;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
@@ -37,23 +38,20 @@ public final class RPNCalculator {
         CommandExecutionStatus currentStatus = CommandExecutionStatus.Success;
         for (int i = 0; i < tokens.length; i++) {
             final String token = tokens[i];
-            final Operation operation = findOperation(token);
+            final Operation operation = Operation.findOperation(token);
             if (operation == Operation.Push) {
                 operationExecutions.push(new OperationExecution(operation, RealNumber.of(token)));
             } else if (operation == Operation.Clear) {
                 currentStatus = performClear(operationExecutions);
             } else if (operation == Operation.Undo) {
                 currentStatus = performUndo(operationExecutions);
-            } else if (operation == Operation.UnsupportedOperation) {
+            } else if (operation == Operation.UnsupportedOperation ) {
                 LOGGER.warn("operator {} (position: {}): unsupported operation", token, line.indexOf(token));
+            } else if (operation == Operation.Help) {
+                LOGGER.info("Supported operations are: {}", Operation.dictionary.keySet());
             } else {
                 final int operationIndex = i;
-                currentStatus = performOperation(operationExecutions, operation, new Supplier<Integer>() {
-                    @Override
-                    public Integer get() {
-                        return TokenPositionFinder.findTokenPositionInOriginalLine(line, operationIndex);
-                    }
-                });
+                currentStatus = performOperation(operationExecutions, operation, () -> findTokenPositionInOriginalLine(line, operationIndex));
             }
 
             if (currentStatus == CommandExecutionStatus.Failed) {
@@ -107,19 +105,8 @@ public final class RPNCalculator {
     private static void rollback(final RPNStack<OperationExecution> operationExecutions,
                                  final List<RealNumber> arguments) {
         for (int i = arguments.size()-1; i >= 0; i--) {
-            final OperationExecution operationExecution = new OperationExecution(Operation.Push, arguments.get(i));
-            operationExecutions.push(operationExecution);
+            operationExecutions.push(new OperationExecution(Operation.Push, arguments.get(i)));
         }
     }
 
-    private static Operation findOperation(final String operationString) throws CalculatorException {
-        final Operation operation = Operation.dictionary.get(operationString);
-        if (operation != null) {
-            return operation;
-        } else if (Operation.Push.matches(operationString)) {
-            return Operation.Push;
-        } else {
-            return Operation.UnsupportedOperation;
-        }
-    }
 }
