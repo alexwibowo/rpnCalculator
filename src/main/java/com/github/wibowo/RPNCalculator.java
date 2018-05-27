@@ -58,6 +58,7 @@ public final class RPNCalculator {
                 currentStatus = performOperation(operationExecutions, operation, () -> findTokenPositionInOriginalLine(line, operationIndex));
             }
 
+            // short circuit : when current operation fail, dont try to process the remaining of the operations
             if (currentStatus == CommandExecutionStatus.Failed) {
                 return currentStatus;
             }

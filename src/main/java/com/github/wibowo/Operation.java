@@ -17,6 +17,9 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public enum Operation {
+    /**
+     * FIRST_ARG + SECOND_ARG
+     */
     Plus("+",2, true){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
@@ -27,6 +30,9 @@ public enum Operation {
         }
 
     },
+    /**
+     * SECOND_ARG - FIRST_ARG
+     */
     Minus("-", 2, true){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
@@ -36,6 +42,9 @@ public enum Operation {
             return RealNumber.of(secondNumber.eval().subtract(firstNumber.eval()));
         }
     },
+    /**
+     * FIRST_ARG + SECOND_ARG
+     */
     Multiply("*", 2, true){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
@@ -45,6 +54,9 @@ public enum Operation {
             return RealNumber.of(secondNumber.eval().multiply(firstNumber.eval()));
         }
     },
+    /**
+     * SECOND_ARG / FIRST_ARG
+     */
     Divide("/", 2, true){
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
@@ -57,6 +69,9 @@ public enum Operation {
             return RealNumber.of(secondNumber.divide(firstNumber, RealNumber.DEFAULT_SCALE, RoundingMode.HALF_EVEN));
         }
     },
+    /**
+     * SQRT (FIRST_ARG)
+     */
     Sqrt("sqrt", 1, true) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
@@ -65,8 +80,17 @@ public enum Operation {
             return RealNumber.of(BigDecimalMath.sqrt(firstNumber.eval(), MathContext.DECIMAL64));
         }
     },
+    /**
+     * Undo previous operation
+     */
     Undo("undo",0, false),
+    /**
+     * Clear the stack
+     */
     Clear("clear",0, false),
+    /**
+     * Push a number into the stack
+     */
     Push("", 1, false) {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
@@ -79,13 +103,22 @@ public enum Operation {
             return operationString.matches("^[-+]?[0-9]*\\.?[0-9]+$");
         }
     },
+    /**
+     * Null object to indicate invalid operation
+     */
     UnsupportedOperation("", 0, false){
         @Override
         public boolean matches(String operationString) {
             return false;
         }
     },
+    /**
+     * Print help
+     */
     Help("?", 0, false),
+    /**
+     * Quit the app
+     */
     Quit("quit", 0, false);
 
     private static void verifyArguments(final Operation operation,

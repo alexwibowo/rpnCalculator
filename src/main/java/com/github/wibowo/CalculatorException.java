@@ -8,6 +8,11 @@ public class CalculatorException extends RuntimeException {
         return DIVISION_BY_ZERO;
     }
 
+    /**
+     * Indicates failure to convert the string number into a number
+     * @param numberAsString String to be converted into number
+     * @return instance of this exception
+     */
     public static CalculatorException invalidNumber(final String numberAsString) {
         return new CalculatorException(String.format("Unable to convert [%s] into a number.", numberAsString));
     }
