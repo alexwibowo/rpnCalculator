@@ -4,6 +4,7 @@ import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
@@ -48,9 +49,12 @@ public enum Operation {
         @Override
         public RealNumber evaluate(final List<RealNumber> arguments) {
             verifyArguments(this, arguments);
-            final RealNumber firstNumber = arguments.get(0);
-            final RealNumber secondNumber = arguments.get(1);
-            return RealNumber.of(secondNumber.eval().divide(firstNumber.eval(), RealNumber.DEFAULT_SCALE, RoundingMode.HALF_EVEN));
+            final BigDecimal firstNumber = arguments.get(0).eval();
+            final BigDecimal secondNumber = arguments.get(1).eval();
+            if (firstNumber.equals(BigDecimal.ZERO)) {
+                throw CalculatorException.divisionByZero();
+            }
+            return RealNumber.of(secondNumber.divide(firstNumber, RealNumber.DEFAULT_SCALE, RoundingMode.HALF_EVEN));
         }
     },
     Sqrt("sqrt", 1, true) {

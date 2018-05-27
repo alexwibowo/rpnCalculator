@@ -14,7 +14,7 @@ import java.util.Objects;
  * Note that the {@link #DEFAULT_SCALE_FOR_PRINTING} is used for the String representation.
  */
 public final class RealNumber  {
-    public static final int DEFAULT_SCALE = 16;
+    public static final int DEFAULT_SCALE = 30;
     public static final int DEFAULT_SCALE_FOR_PRINTING = 10;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.FLOOR;
 
@@ -45,7 +45,7 @@ public final class RealNumber  {
             }
             return new RealNumber(value.stripTrailingZeros());
         } catch (final Exception exception) {
-            throw new CalculatorException(String.format("Unable to convert [%s] into a number.", numberAsString));
+            throw CalculatorException.invalidNumber(numberAsString);
         }
     }
 

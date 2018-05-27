@@ -124,7 +124,7 @@ class OperationTest {
 
     @Test
     void test_divide_by_zero() {
-        final ArithmeticException arithmeticException = assertThrows(ArithmeticException.class, () -> Operation.Divide.evaluate(TestHelper.getArguments("0", "4")));
+        final CalculatorException arithmeticException = assertThrows(CalculatorException.class, () -> Operation.Divide.evaluate(TestHelper.getArguments("0", "4")));
         assertThat(arithmeticException.getMessage())
                 .isEqualTo("/ by zero");
     }

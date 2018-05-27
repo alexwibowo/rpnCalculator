@@ -269,6 +269,25 @@ class RPNCalculatorAcceptanceTest {
     }
 
     @Test
+    void test_division_by_very_small_number() {
+        final StringBuilder builder = new StringBuilder("0.");
+        for (int i = 0; i < RealNumber.DEFAULT_SCALE-1; i++) {
+            builder.append("0");
+        }
+        builder.append("1");
+        final String smallNumber = builder.toString();
+
+        final String command = "" +
+                "3\n" +
+                smallNumber + "\n" +
+                "/\n";
+        givenInput(command);
+        final String[] output = executeAndGetOutput();
+        assertThat(output.length).isEqualTo(3);
+        assertThat(output[2]).isEqualTo("stack: 3000000000000000000000000000000");
+    }
+
+    @Test
     void test_invalid_operation() {
         givenInput("" +
                 "1 2 (\n" +
