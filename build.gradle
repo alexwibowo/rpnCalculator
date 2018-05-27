@@ -13,7 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'findbugs'
 apply plugin: 'project-report'
-apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -22,6 +22,7 @@ buildscript {
 	ext.kotlin_version = '1.2.41'
 
 	repositories {
+		jcenter()
 		mavenLocal()
 		mavenCentral()
 	}
@@ -31,6 +32,8 @@ buildscript {
 
 		/** Configure Gradle to run JUnit 5 */
 		classpath "org.junit.platform:junit-platform-gradle-plugin:${junitGradlePluginVersion}"
+
+		classpath "com.github.jengelman.gradle.plugins:shadow:${shadowPluginVersion}"
 	}
 
 }
@@ -60,7 +63,6 @@ repositories {
 	mavenCentral()
 }
 
-mainClassName = 'com.github.wibowo.RPNCalculator'
 
 dependencies {
 		compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -79,8 +81,6 @@ dependencies {
 		compile group: 'com.google.guava', name: 'guava', version: "${guavaVersion}"
 		compile group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
 
-		compile group: 'com.lmax', name: 'disruptor', version:"${lmaxDisruptorVersion}"
-
 		testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 		testCompile group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4j2Version}", classifier: "tests"
 
@@ -97,6 +97,12 @@ dependencies {
 		// The junit-platform-runner dependency allows us to run tests and test suites in a JUnit 4 environment.
 		testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
+}
+
+jar {
+	manifest {
+		attributes "Main-Class": "com.github.wibowo.RPNCalculator"
+	}
 }
 
 plugins.withType(JavaPlugin) {
