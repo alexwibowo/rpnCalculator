@@ -33,7 +33,9 @@ class RealNumberTest {
     @Test
     void eval_value_with_fractions_and_default_scaling() {
         assertThat(RealNumber.of("42.5678956789567895678956789").eval())
-                .isEqualTo(new BigDecimal("42.5678956789"));
+                .isNotEqualTo(new BigDecimal("42.5678956789"));
+        assertThat(RealNumber.of("42.5678956789567895678956789").toString())
+                .isEqualTo("42.5678956789");
     }
 
     @Test

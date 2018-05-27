@@ -15,6 +15,7 @@ apply plugin: 'project-report'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'jacoco'
 apply plugin: 'pmd'
+apply plugin: 'info.solidsoft.pitest'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -27,11 +28,14 @@ buildscript {
 		mavenLocal()
 		mavenCentral()
 	}
-
+	configurations.maybeCreate('pitest')
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
 		classpath "com.github.jengelman.gradle.plugins:shadow:${shadowPluginVersion}"
+
+		classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.3.0'
+		pitest 'org.pitest:pitest-junit5-plugin:0.3'
 	}
 
 }
@@ -130,5 +134,14 @@ plugins.withType(JavaPlugin) {
 
 test {
 	useJUnitPlatform()
+}
+
+pitest {
+	pitestVersion = "1.3.0"
+	testPlugin = 'junit5'
+	targetClasses = ['com.github.wibowo.*']  //by default "${project.group}.*"
+	threads = 4
+	outputFormats = ['XML', 'HTML']
+	timestampedReports = false
 }
 

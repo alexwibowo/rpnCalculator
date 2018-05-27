@@ -60,11 +60,17 @@ class OperationTest {
     }
 
     @Test
-    void test_sqrt() {
-        assertThat(Operation.Sqrt.evaluate(TestHelper.getArguments("2")))
-                .isEqualTo(RealNumber.of("1.4142135623"));
+    void test_sqrt_exact() {
         assertThat(Operation.Sqrt.evaluate(TestHelper.getArguments("9")))
                 .isEqualTo(RealNumber.of("3"));
+    }
+
+    @Test
+    void test_sqrt_with_rounding_for_presentation() {
+        assertThat(Operation.Sqrt.evaluate(TestHelper.getArguments("2")))
+                .isNotEqualTo(RealNumber.of("1.4142135623"));
+        assertThat(Operation.Sqrt.evaluate(TestHelper.getArguments("2")).toString())
+                .isEqualTo("1.4142135623");
     }
 
     @Test

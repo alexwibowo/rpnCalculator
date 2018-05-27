@@ -40,6 +40,13 @@ class RPNCalculatorAcceptanceTest {
     }
 
     @Test
+    void test_help() {
+        givenInput("?\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output[0]).contains("Supported operations are:");
+    }
+
+    @Test
     void push_single_number_to_stack() {
         givenInput("5\n");
 
@@ -190,6 +197,14 @@ class RPNCalculatorAcceptanceTest {
         assertThat(output[0]).isEqualTo("stack: 7 6");
         assertThat(output[1]).isEqualTo("stack: 42");
         assertThat(output[2]).isEqualTo("stack: 10.5");
+    }
+
+    @Test
+    void shows_leading_zero_for_number_less_than_1() {
+        givenInput("" +
+                "1 5 /\n");
+        final String[] output = executeAndGetOutput();
+        assertThat(output).containsExactly("stack: 0.2");
     }
 
     @Test

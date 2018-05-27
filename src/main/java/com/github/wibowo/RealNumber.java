@@ -14,14 +14,15 @@ import java.util.Objects;
  * Note that the {@link #DEFAULT_SCALE_FOR_PRINTING} is used for the String representation.
  */
 public final class RealNumber  {
-    public static final int DEFAULT_SCALE = 10;
-    public static final int DEFAULT_SCALE_FOR_PRINTING = 16;
+    public static final int DEFAULT_SCALE = 16;
+    public static final int DEFAULT_SCALE_FOR_PRINTING = 10;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.FLOOR;
 
     private final ThreadLocal<DecimalFormat> decimalFormatter = ThreadLocal.withInitial(() -> {
         final DecimalFormat decimalFormatter = new DecimalFormat();
         decimalFormatter.setMaximumFractionDigits(DEFAULT_SCALE_FOR_PRINTING);
         decimalFormatter.setMinimumFractionDigits(0);
+        decimalFormatter.setRoundingMode(DEFAULT_ROUNDING_MODE);
         decimalFormatter.setGroupingUsed(false);
         return decimalFormatter;
     });
