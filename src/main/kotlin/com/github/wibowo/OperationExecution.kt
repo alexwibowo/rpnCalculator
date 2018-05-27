@@ -6,15 +6,12 @@ import com.google.common.collect.Lists
  * A snapshot of operation execution. Having this snapshot allows us to rollback with exact
  * parameter used to perform the execution. E.g. for [Operation.Undo] or when we want to rollback
  * due to arithmetic exception.
+ *
+ * @param operation: Operation that was attempted
+ * @param arguments: arguments required by the operation
  */
 class OperationExecution(
-        /**
-         * Operation that was attempted
-         */
         val operation: Operation,
-        /**
-         * Arguments required by the operation
-         */
         val arguments: List<RealNumber>) {
 
     /**
