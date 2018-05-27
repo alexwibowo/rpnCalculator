@@ -11,15 +11,16 @@ import java.util.Objects;
  * Abstraction of number, with default formatting and scaling
  *
  * Default scaling used is {@link #DEFAULT_SCALE}, unless specified {@link RealNumber#of(String, int)}
- * Note that the {@link #DEFAULT_SCALE} is always used for the String representation.
+ * Note that the {@link #DEFAULT_SCALE_FOR_PRINTING} is used for the String representation.
  */
 public final class RealNumber  {
     public static final int DEFAULT_SCALE = 10;
+    public static final int DEFAULT_SCALE_FOR_PRINTING = 16;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.FLOOR;
 
     private final ThreadLocal<DecimalFormat> decimalFormatter = ThreadLocal.withInitial(() -> {
         final DecimalFormat decimalFormatter = new DecimalFormat();
-        decimalFormatter.setMaximumFractionDigits(DEFAULT_SCALE);
+        decimalFormatter.setMaximumFractionDigits(DEFAULT_SCALE_FOR_PRINTING);
         decimalFormatter.setMinimumFractionDigits(0);
         decimalFormatter.setGroupingUsed(false);
         return decimalFormatter;
