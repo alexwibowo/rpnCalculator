@@ -1,7 +1,9 @@
 package com.github.wibowo;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Preconditions;
 
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +57,7 @@ public enum Operation {
         public RealNumber evaluate(final List<RealNumber> arguments) {
             verifyArguments(this, arguments);
             final RealNumber firstNumber = arguments.get(0);
-            return RealNumber.of(Math.sqrt(firstNumber.eval().doubleValue()));
+            return RealNumber.of(BigDecimalMath.sqrt(firstNumber.eval(), MathContext.DECIMAL64));
         }
     },
     Undo("undo",0, false) {

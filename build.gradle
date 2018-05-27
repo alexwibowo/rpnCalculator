@@ -14,6 +14,7 @@ apply plugin: 'findbugs'
 apply plugin: 'project-report'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'jacoco'
+apply plugin: 'pmd'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -62,7 +63,8 @@ repositories {
 
 
 dependencies {
-		compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+		compile group: "org.jetbrains.kotlin", name:"kotlin-stdlib", version:"${kotlin_version}"
+		compile group: "ch.obermuhlner", name:"big-math", version: "${bigMathVersion}"
 		compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: "${log4j2Version}"
 		compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4j2Version}"
 
