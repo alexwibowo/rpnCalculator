@@ -1,6 +1,7 @@
 # RPN Calculator
 
 [![Build Status](https://travis-ci.org/alexwibowo/rpnCalculator.svg?branch=master)](https://travis-ci.org/alexwibowo/rpnCalculator)
+[![BCH compliance](https://bettercodehub.com/edge/badge/alexwibowo/rpnCalculator?branch=master)](https://bettercodehub.com/)
 
 The calculator has a stack that can contain real numbers.
 * The calculator waits for user input and expects to receive strings containing whitespace separated lists of numbers and operators.
